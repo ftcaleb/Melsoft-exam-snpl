@@ -1,0 +1,1618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Melsoft Fundamentals Exam</title>
+<style>
+  :root {
+    --primary: #ffffff;
+    --secondary: #0e1a38;
+    --secondary-soft: #1c2b52;
+    --secondary-tint: #e8ebf3;
+    --border: #d6dae4;
+    --muted: #6b7280;
+    --text: #0e1a38;
+    --accent: #2f4bd3;
+    --success: #16a34a;
+    --success-tint: #dcfce7;
+    --amber: #d97706;
+    --amber-tint: #fef3c7;
+    --danger: #dc2626;
+    --danger-tint: #fee2e2;
+    --code-bg: #f5f6fa;
+    --shadow: 0 8px 24px rgba(14,26,56,0.06);
+  }
+  [data-theme="dark"] {
+    --primary: #0b1428;
+    --secondary: #e8ebf3;
+    --secondary-soft: #cbd2e1;
+    --secondary-tint: #1c2b52;
+    --border: #2a3554;
+    --muted: #96a0bb;
+    --text: #e8ebf3;
+    --code-bg: #101a34;
+    --shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --primary: #0b1428;
+      --secondary: #e8ebf3;
+      --secondary-soft: #cbd2e1;
+      --secondary-tint: #1c2b52;
+      --border: #2a3554;
+      --muted: #96a0bb;
+      --text: #e8ebf3;
+      --code-bg: #101a34;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--primary);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--primary);
+    color: var(--text);
+    padding: 10px 16px;
+    font-weight: 500;
+    transition: transform .05s ease, background .15s ease, border-color .15s ease;
+  }
+  button:hover:not(:disabled) { border-color: var(--secondary); }
+  button:active:not(:disabled) { transform: translateY(1px); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  button.primary {
+    background: var(--secondary);
+    color: var(--primary);
+    border-color: var(--secondary);
+  }
+  button.primary:hover:not(:disabled) { background: var(--secondary-soft); border-color: var(--secondary-soft); }
+  button.ghost { background: transparent; }
+  button.danger { background: var(--danger); color: white; border-color: var(--danger); }
+  input[type=text], input[type=email], textarea {
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, textarea:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(14,26,56,0.08);
+  }
+  textarea { resize: vertical; min-height: 120px; line-height: 1.55; }
+  textarea.code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 13.5px;
+    background: var(--code-bg);
+    border-color: var(--border);
+    min-height: 180px;
+    tab-size: 2;
+    -moz-tab-size: 2;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+  }
+  a { color: var(--secondary); }
+
+  /* App shell */
+  .app { max-width: 100%; margin: 0 auto; padding: 0; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--secondary); font-size: 16px; letter-spacing: -0.01em; }
+  .brand .logo {
+    width: 28px; height: 28px; border-radius: 6px; background: var(--secondary);
+    color: var(--primary); display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  }
+  .top-right { display: flex; align-items: center; gap: 16px; }
+  .timer {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--secondary-tint);
+    color: var(--secondary);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .timer.warn { background: var(--amber-tint); color: var(--amber); }
+  .timer.crit { background: var(--danger-tint); color: var(--danger); animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .7; } }
+
+  /* Screens */
+  .screen { padding: 32px 24px; max-width: 1100px; margin: 0 auto; }
+  .screen h1 { font-size: 26px; margin: 0 0 8px; color: var(--secondary); letter-spacing: -0.02em; }
+  .screen h2 { font-size: 18px; margin: 24px 0 8px; color: var(--secondary); }
+  .screen p { margin: 8px 0 12px; color: var(--text); }
+  .muted { color: var(--muted); }
+
+  /* Landing */
+  .landing { max-width: 560px; margin: 60px auto; padding: 32px; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); background: var(--primary); }
+  .landing h1 { text-align: center; }
+  .landing .field { margin: 16px 0; }
+  .landing label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+  .landing .rules { background: var(--secondary-tint); border-radius: 10px; padding: 16px; margin: 20px 0; font-size: 14px; }
+  .landing .rules ul { margin: 8px 0 0; padding-left: 20px; }
+  .landing .rules li { margin: 4px 0; }
+  .landing .start-btn { width: 100%; padding: 14px; font-size: 15px; margin-top: 8px; }
+
+  /* Exam layout */
+  .exam-layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
+  @media (max-width: 800px) { .exam-layout { grid-template-columns: 1fr; } }
+
+  .side { position: sticky; top: 72px; align-self: flex-start; border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--primary); max-height: calc(100vh - 92px); overflow-y: auto; }
+  .side h3 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .qgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px; }
+  .qbtn {
+    padding: 8px 0;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--primary);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+  }
+  .qbtn.answered { background: var(--success-tint); border-color: var(--success); color: var(--success); }
+  .qbtn.flagged { background: var(--amber-tint); border-color: var(--amber); color: var(--amber); }
+  .qbtn.answered.flagged {
+    background: linear-gradient(135deg, var(--success-tint) 50%, var(--amber-tint) 50%);
+  }
+  .qbtn.current { outline: 2px solid var(--secondary); outline-offset: 2px; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 12px 0 6px; font-weight: 700; }
+  .legend { font-size: 12px; color: var(--muted); }
+  .legend-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--border); }
+  .legend-dot.a { background: var(--success-tint); border-color: var(--success); }
+  .legend-dot.f { background: var(--amber-tint); border-color: var(--amber); }
+
+  /* Question view */
+  .qview { border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; background: var(--primary); box-shadow: var(--shadow); }
+  .qmeta { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; font-size: 12px; }
+  .qmeta .badge { background: var(--secondary); color: var(--primary); padding: 3px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.02em; }
+  .qmeta .kind { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; font-size: 11px; }
+  .qtitle { font-size: 20px; margin: 6px 0 4px; color: var(--secondary); }
+  .qprompt { font-size: 15px; margin: 8px 0 20px; white-space: pre-wrap; }
+  .qprompt code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.92em; }
+  .qbody { margin-top: 12px; }
+  .codeblock {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: ui-monospace, monospace;
+    font-size: 13.5px;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 8px 0 16px;
+    border: 1px solid var(--border);
+    line-height: 1.6;
+  }
+
+  /* IDE */
+  .ide { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+  .ide-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--secondary-tint); border-bottom: 1px solid var(--border); font-size: 13px; }
+  .ide-head .label { font-weight: 600; color: var(--secondary); }
+  .ide-actions { display: flex; gap: 6px; }
+  .ide-actions button { padding: 5px 10px; font-size: 12px; }
+  .ide textarea.code { border: none; border-radius: 0; min-height: 220px; margin: 0; display: block; }
+  .console {
+    background: var(--secondary);
+    color: #cbd2e1;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    padding: 10px 14px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .console.open { display: block; }
+  .console .line { padding: 2px 0; }
+  .console .log { color: #cbd2e1; }
+  .console .warn { color: #fbbf24; }
+  .console .error { color: #f87171; }
+  .console .info { color: #7dd3fc; }
+  .console .empty { color: #6b7280; font-style: italic; }
+
+  /* Nav row */
+  .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 12px; flex-wrap: wrap; }
+  .nav-left, .nav-right { display: flex; gap: 8px; }
+  .flag-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+
+  /* Review */
+  .review-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .review-table th, .review-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+  .review-table th { background: var(--secondary-tint); color: var(--secondary); font-weight: 600; font-size: 13px; }
+  .review-table .num { width: 40px; font-weight: 700; }
+  .review-table .status { width: 90px; }
+  .review-table .actions { width: 80px; text-align: right; }
+  .review-answer { color: var(--muted); font-size: 13px; max-height: 60px; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; }
+  .status-pill { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .status-pill.a { background: var(--success-tint); color: var(--success); }
+  .status-pill.u { background: var(--danger-tint); color: var(--danger); }
+  .status-pill.f { background: var(--amber-tint); color: var(--amber); }
+
+  /* Submitted */
+  .submitted { text-align: center; max-width: 620px; margin: 60px auto; padding: 40px; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); background: var(--primary); }
+  .submitted .check { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: var(--success-tint); color: var(--success); display: grid; place-items: center; font-size: 32px; }
+  .submitted h1 { color: var(--success); }
+  .score-big { font-size: 40px; font-weight: 800; color: var(--secondary); margin: 12px 0 4px; font-variant-numeric: tabular-nums; }
+  .score-max { color: var(--muted); font-size: 16px; }
+
+  /* Admin */
+  .admin-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .admin-table { width: 100%; border-collapse: collapse; }
+  .admin-table th, .admin-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .admin-table th { background: var(--secondary-tint); color: var(--secondary); font-weight: 600; font-size: 13px; }
+  .admin-table tr.clickable { cursor: pointer; }
+  .admin-table tr.clickable:hover { background: var(--secondary-tint); }
+  .empty-state { padding: 40px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 10px; }
+
+  /* Marking detail */
+  .mark-detail { border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 16px; background: var(--primary); }
+  .mark-q { border-bottom: 1px solid var(--border); padding: 16px 0; }
+  .mark-q:last-child { border-bottom: none; }
+  .mark-q-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+  .mark-q-title { font-weight: 700; color: var(--secondary); }
+  .mark-q-prompt { font-size: 13.5px; color: var(--muted); margin-bottom: 8px; }
+  .mark-q-answer { background: var(--code-bg); border-radius: 6px; padding: 10px 12px; white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; margin: 8px 0; }
+  .mark-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .score-input { width: 80px; }
+  .feedback-input { flex: 1; min-width: 200px; }
+  .mark-score-tag { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+  .mark-score-tag.good { background: var(--success-tint); color: var(--success); }
+  .mark-score-tag.mid { background: var(--amber-tint); color: var(--amber); }
+  .mark-score-tag.poor { background: var(--danger-tint); color: var(--danger); }
+  .marking-note { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
+  .automark-msg { font-size: 13px; color: var(--secondary); background: var(--secondary-tint); padding: 10px 12px; border-radius: 8px; margin: 10px 0; }
+
+  /* Modal */
+  .backdrop { position: fixed; inset: 0; background: rgba(14,26,56,0.5); display: none; z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .backdrop.open { display: flex; }
+  .modal { background: var(--primary); border-radius: 12px; padding: 28px; max-width: 480px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal h2 { margin-top: 0; color: var(--secondary); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  .helper { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  /* Admin */
+  .admin-login-card { max-width: 420px; margin: 80px auto; padding: 32px; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); background: var(--primary); }
+  .admin-login-card h1 { font-size: 22px; margin: 0 0 6px; color: var(--secondary); text-align: center; }
+  .admin-login-card .sub { text-align: center; color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+  .admin-login-card .field { margin: 14px 0; }
+  .admin-login-card label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; }
+  .admin-login-card .submit { width: 100%; padding: 12px; font-size: 15px; margin-top: 8px; }
+  .admin-login-card .err { background: var(--danger-tint); color: var(--danger); padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .admin-header h1 { margin: 0 0 4px; font-size: 22px; color: var(--secondary); }
+  .admin-header .who { font-size: 13px; color: var(--muted); }
+  .admin-table { width: 100%; border-collapse: collapse; background: var(--primary); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .admin-table th, .admin-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .admin-table th { background: var(--secondary-tint); color: var(--secondary); font-weight: 600; font-size: 13px; }
+  .admin-table tr:last-child td { border-bottom: none; }
+  .admin-table tr.clickable { cursor: pointer; }
+  .admin-table tr.clickable:hover td { background: var(--secondary-tint); }
+  .empty-state { padding: 40px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 10px; background: var(--primary); }
+  .mark-detail { border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-top: 16px; background: var(--primary); }
+  .mark-q { border-bottom: 1px solid var(--border); padding: 18px 0; }
+  .mark-q:first-child { padding-top: 4px; }
+  .mark-q:last-child { border-bottom: none; }
+  .mark-q-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .mark-q-title { font-weight: 700; color: var(--secondary); }
+  .mark-q-prompt { font-size: 13.5px; color: var(--muted); margin: 4px 0 10px; }
+  .mark-q-answer { background: var(--code-bg); border-radius: 6px; padding: 10px 12px; white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; margin: 8px 0; max-height: 260px; overflow: auto; }
+  .mark-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .score-input { width: 80px; }
+  .feedback-input { flex: 1; min-width: 200px; }
+  .mark-score-tag { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+  .mark-score-tag.good { background: var(--success-tint); color: var(--success); }
+  .mark-score-tag.mid  { background: var(--amber-tint); color: var(--amber); }
+  .mark-score-tag.poor { background: var(--danger-tint); color: var(--danger); }
+  .notes-block { margin-top: 16px; }
+  .notes-block textarea { min-height: 90px; }
+  .save-bar { position: sticky; bottom: 0; margin-top: 16px; padding: 14px 16px; background: var(--primary); border: 1px solid var(--border); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; box-shadow: 0 -4px 12px rgba(14,26,56,0.06); flex-wrap: wrap; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 10px 16px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity .2s ease; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div id="root"></div>
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   QUESTIONS
+   ============================================================ */
+const QUESTIONS = [
+  // -------- SECTION A: FRONTEND --------
+  { id: 'a1', section: 'A', number: 1, kind: 'Definition', type: 'text',
+    title: 'Question 1',
+    prompt: "What is the DOM (Document Object Model)? Answer in your own words in two or three sentences.",
+    marks: 3,
+    rubric: "Full credit if the answer identifies (a) the DOM as a programmatic/tree representation of an HTML (or XML) document, and (b) that JavaScript uses it to read and modify page content. Partial credit for one of the two." },
+
+  { id: 'a2', section: 'A', number: 2, kind: 'Short Answer', type: 'text',
+    title: 'Question 2',
+    prompt: "Explain the difference between let, const, and var in JavaScript. When would you choose each?",
+    marks: 4,
+    rubric: "Full credit if the answer covers: var is function-scoped and hoisted; let is block-scoped and re-assignable; const is block-scoped and cannot be re-assigned (though object contents can mutate). One mark per accurate distinction, one for a reasonable guidance on when to choose each." },
+
+  { id: 'a3', section: 'A', number: 3, kind: 'Code Completion', type: 'code',
+    title: 'Question 3',
+    prompt: "Complete the code below so that it sends the object { email: 'test@example.com' } as JSON to /api/otp/send using a POST request. Fill in the three blanks.",
+    starter: "fetch('/api/otp/send', {\n  method: '___',\n  headers: { '___': 'application/json' },\n  body: ___\n});",
+    marks: 3,
+    rubric: "1 mark for method: 'POST'. 1 mark for header key 'Content-Type'. 1 mark for body: JSON.stringify({ email: 'test@example.com' }). Accept minor case/whitespace variations." },
+
+  { id: 'a4', section: 'A', number: 4, kind: 'Short Answer', type: 'text',
+    title: 'Question 4',
+    prompt: "The CSS box model has four parts that surround an element's content. Name all four and briefly describe what each one does.",
+    marks: 4,
+    rubric: "1 mark each for: content (the actual content area), padding (space inside the border), border (the line around the padding), margin (space outside the border, separating from other elements)." },
+
+  { id: 'a5', section: 'A', number: 5, kind: 'Code Completion', type: 'code',
+    title: 'Question 5',
+    prompt: "Given the HTML element <button id=\"submit-btn\">Submit</button>, write the JavaScript that attaches a click handler to the button. The handler should log the string \"Clicked!\" to the console.",
+    starter: "// Write your code here\n",
+    marks: 3,
+    rubric: "Full credit for: document.getElementById('submit-btn').addEventListener('click', () => console.log('Clicked!')); Also accept querySelector, function expressions, onclick property. Deduct for missing quotes/parens." },
+
+  { id: 'a6', section: 'A', number: 6, kind: 'Debugging', type: 'code',
+    title: 'Question 6',
+    prompt: "The developer expected the code below to print 'Ada', 'Grace', 'Katherine' (in some order). Instead it prints 'undefined' three times. What is wrong, and how would you fix it? Write your corrected version below and briefly explain the bug in a comment.",
+    starter: "const users = ['Ada', 'Grace', 'Katherine'];\nfor (var i = 0; i < users.length; i++) {\n  setTimeout(function() {\n    console.log(users[i]);\n  }, 100);\n}\n\n// Your fix and explanation:\n",
+    marks: 4,
+    rubric: "2 marks for identifying the closure issue (var is function-scoped, so all callbacks share the same i, which is 3 by the time they run — beyond the array). 2 marks for the fix (change var to let, OR wrap in an IIFE, OR use forEach). Explanation must be technically accurate." },
+
+  { id: 'a7', section: 'A', number: 7, kind: 'Short Answer', type: 'text',
+    title: 'Question 7',
+    prompt: "What is 'semantic HTML'? Give at least two examples of semantic HTML elements and explain what they communicate that a plain <div> does not.",
+    marks: 3,
+    rubric: "1 mark for defining semantic HTML (elements that convey meaning about their content, aiding accessibility, SEO, and readability). 1 mark for each of two valid examples with correct meaning (e.g., <nav>, <article>, <header>, <footer>, <main>, <section>, <aside>, <button>, <time>)." },
+
+  { id: 'a8', section: 'A', number: 8, kind: 'Short Answer', type: 'text',
+    title: 'Question 8',
+    prompt: "In JavaScript, what is the difference between == and ===? Give one example of a comparison that returns different results with each operator.",
+    marks: 3,
+    rubric: "2 marks for correct explanation: == performs type coercion (loose equality), === compares without coercion (strict equality). 1 mark for a valid example, e.g., 0 == '' is true but 0 === '' is false; 1 == '1' is true but 1 === '1' is false; null == undefined is true but null === undefined is false." },
+
+  { id: 'a9', section: 'A', number: 9, kind: 'Predict Output', type: 'code',
+    title: 'Question 9',
+    prompt: "What will the following code print to the console, in what order, and why? Write the output and a brief explanation.",
+    starter: "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);\n\n// Predicted output and explanation:\n",
+    marks: 4,
+    rubric: "2 marks for correct output order: 1, 4, 3, 2. 2 marks for explanation: synchronous code runs first (1, 4); then microtasks (Promise.then → 3); then macrotasks (setTimeout → 2). Even 0-ms setTimeout is a macrotask and runs after microtasks." },
+
+  { id: 'a10', section: 'A', number: 10, kind: 'Explain', type: 'text',
+    title: 'Question 10',
+    prompt: "Walk through what happens between the moment a user clicks a link in their browser and the moment the new page appears on their screen. Include at least four steps.",
+    marks: 5,
+    rubric: "1 mark each for any five of: (1) browser cancels current navigation or intercepts click; (2) URL is parsed, DNS lookup for hostname; (3) TCP/TLS connection established; (4) HTTP request sent; (5) server responds with HTML; (6) browser parses HTML, builds DOM; (7) fetches CSS/JS/images; (8) builds render tree, paints; (9) executes JS. Full credit for a coherent narrative touching five distinct stages." },
+
+  // -------- SECTION B: BACKEND --------
+  { id: 'b1', section: 'B', number: 1, kind: 'Definition', type: 'text',
+    title: 'Question 1',
+    prompt: "What is a function? Describe its main parts (name, parameters, body, return value) and give one short example.",
+    marks: 4,
+    rubric: "1 mark for a correct definition (a reusable block of code that performs a task). 1 mark each for correctly explaining parameters (inputs), body (the code that runs), and return value (the output). Example should be syntactically valid." },
+
+  { id: 'b2', section: 'B', number: 2, kind: 'Definition', type: 'text',
+    title: 'Question 2',
+    prompt: "What is an API endpoint? Give an example of an endpoint URL and describe what a request to it might do.",
+    marks: 3,
+    rubric: "1 mark for defining endpoint (a specific URL that an API exposes to perform a specific action or return a resource). 1 mark for a plausible URL (e.g., GET /api/users/123). 1 mark for describing what it does (e.g., 'returns the user with id 123')." },
+
+  { id: 'b3', section: 'B', number: 3, kind: 'Short Answer', type: 'text',
+    title: 'Question 3',
+    prompt: "Name four common HTTP methods and describe what each is typically used for in a REST API.",
+    marks: 4,
+    rubric: "1 mark each (any four): GET (retrieve data), POST (create a resource), PUT (replace/update a resource), PATCH (partial update), DELETE (remove a resource). Also accept HEAD, OPTIONS with correct explanation." },
+
+  { id: 'b4', section: 'B', number: 4, kind: 'Short Answer', type: 'text',
+    title: 'Question 4',
+    prompt: "What do the HTTP status code ranges 2xx, 4xx, and 5xx mean? Give one example status code from each range and describe when you would return it.",
+    marks: 6,
+    rubric: "For each range: 1 mark for meaning, 1 mark for a valid example with correct use case. 2xx = success (e.g., 200 OK for a successful GET, 201 Created for a new resource). 4xx = client error (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found). 5xx = server error (e.g., 500 Internal Server Error, 503 Service Unavailable)." },
+
+  { id: 'b5', section: 'B', number: 5, kind: 'Code Completion', type: 'code',
+    title: 'Question 5',
+    prompt: "Complete the following Express route so that it responds to GET requests on /api/health with a JSON body of { status: 'ok' } and HTTP status code 200. Fill in the three blanks.",
+    starter: "app.get('___', (req, res) => {\n  res.status(___).json(___);\n});",
+    marks: 3,
+    rubric: "1 mark for '/api/health'. 1 mark for 200. 1 mark for { status: 'ok' } (accept single or double quotes)." },
+
+  { id: 'b6', section: 'B', number: 6, kind: 'Short Answer', type: 'text',
+    title: 'Question 6',
+    prompt: "What is middleware in Express? Give one example of a real use case (for example authentication, logging, or parsing request bodies) and describe what the middleware would do.",
+    marks: 4,
+    rubric: "2 marks for defining middleware (a function that runs between the request arriving and the route handler responding; has access to req, res, next; calls next() to pass control). 2 marks for a real use case with a clear description of what it does (e.g., 'auth middleware reads the token from the Authorization header, verifies it, attaches user to req, then calls next; if invalid it returns 401')." },
+
+  { id: 'b7', section: 'B', number: 7, kind: 'Code Rewrite', type: 'code',
+    title: 'Question 7',
+    prompt: "Rewrite the following callback-style function so that it uses async and await instead. Assume db.query returns a Promise when called without a callback.",
+    starter: "function getUser(id, callback) {\n  db.query('SELECT * FROM users WHERE id = ?', [id], (err, result) => {\n    if (err) return callback(err);\n    callback(null, result[0]);\n  });\n}\n\n// Your async/await version:\n",
+    marks: 4,
+    rubric: "Full credit for: async function getUser(id) { const result = await db.query('SELECT * FROM users WHERE id = ?', [id]); return result[0]; } — 2 marks for async keyword and await, 1 mark for correct return (result[0]), 1 mark for removing the callback parameter. Bonus/full credit if try/catch is used for error handling." },
+
+  { id: 'b8', section: 'B', number: 8, kind: 'Definition', type: 'text',
+    title: 'Question 8',
+    prompt: "What is a callback function? Write a simple example of a function that takes another function as an argument and calls it.",
+    marks: 3,
+    rubric: "1 mark for definition (a function passed as an argument to another function, invoked at a specific point). 2 marks for a valid example, e.g., function greet(name, cb) { cb('Hello ' + name); } — the example must actually invoke the callback." },
+
+  { id: 'b9', section: 'B', number: 9, kind: 'Short Answer', type: 'text',
+    title: 'Question 9',
+    prompt: "What is an environment variable? Give two reasons why it is a bad idea to hardcode values like API keys, database URLs, or port numbers directly into your source code.",
+    marks: 4,
+    rubric: "2 marks for defining environment variables (values set outside the code, in the shell/OS/config, accessible via process.env in Node). 1 mark each for two valid reasons, e.g.: (1) security — secrets committed to git are exposed; (2) portability — different values for dev/staging/prod without code changes; (3) rotation — change without redeploying; (4) team safety — different developers can use different local settings." },
+
+  { id: 'b10', section: 'B', number: 10, kind: 'Debugging', type: 'code',
+    title: 'Question 10',
+    prompt: "What will happen when the following code runs, and why? Rewrite it so that data holds the parsed JSON response before it is logged.",
+    starter: "async function main() {\n  console.log('start');\n  const data = fetch('/api/users');\n  console.log(data);\n  console.log('end');\n}\nmain();\n\n// Your explanation and corrected code:\n",
+    marks: 4,
+    rubric: "2 marks for identifying the bug: fetch returns a Promise; without await, data is a pending Promise object, so the log shows Promise { <pending> } rather than the response. 2 marks for a corrected version: const response = await fetch('/api/users'); const data = await response.json(); console.log(data); Accept omitting the second await if they just want the Response object." },
+];
+
+/* ============================================================
+   CONFIG — EDIT THIS BEFORE DEPLOYING
+   ============================================================ */
+const CONFIG = {
+  // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE.
+  // It looks like: https://script.google.com/macros/s/AKfy.../exec
+  // See the deployment guide for how to get this URL.
+  submitUrl: "PASTE_YOUR_WEBHOOK_URL_HERE",
+
+  examTitle: "Fundamentals Exam: Frontend and Backend",
+  durationSec: 45 * 60,
+  totalQuestions: QUESTIONS.length,
+  maxScore: QUESTIONS.reduce((s, q) => s + q.marks, 0),
+  localKey: "melsoft_exam_progress_v1",
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  screen: 'landing',        // 'landing' | 'exam' | 'review' | 'submitting' | 'submitted' | 'submit_failed' | 'admin_login' | 'admin_list' | 'admin_detail'
+  student: { name: '', email: '' },
+  startedAt: null,          // ms
+  submittedAt: null,
+  currentIdx: 0,
+  answers: {},              // id -> string
+  flags: {},                // id -> bool
+  timerHandle: null,
+  timerExpired: false,
+  submitError: null,        // string if last submit attempt failed
+  pendingPayload: null,     // saved on failure so student can retry / download
+  // Admin
+  adminToken: null,
+  adminEmail: null,
+  adminSubmissions: [],
+  adminActive: null,        // full submission object currently open
+  adminLoading: false,
+  adminError: null,
+};
+
+/* ============================================================
+   BOOT — no artifact capabilities in the standalone build
+   ============================================================ */
+async function bootCapabilities() {
+  // Nothing to boot in standalone mode. Function kept so the rest of the code doesn't change.
+  return;
+}
+
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+function saveLocal() {
+  try {
+    const payload = {
+      student: state.student,
+      startedAt: state.startedAt,
+      answers: state.answers,
+      flags: state.flags,
+      currentIdx: state.currentIdx,
+      screen: state.screen === 'submitted' ? 'submitted' : (state.startedAt ? 'exam' : 'landing'),
+    };
+    localStorage.setItem(CONFIG.localKey, JSON.stringify(payload));
+  } catch(e) { /* storage unavailable — carry on */ }
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(CONFIG.localKey);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+function clearLocal() {
+  try { localStorage.removeItem(CONFIG.localKey); } catch(e) {}
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function fmtTime(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function el(html) {
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+function currentQuestion() {
+  return QUESTIONS[state.currentIdx];
+}
+function isAnswered(qid) {
+  const v = state.answers[qid];
+  return v != null && v.trim().length > 0 && v.trim() !== (QUESTIONS.find(q=>q.id===qid).starter || '').trim();
+}
+function timeUsedSec() {
+  if (!state.startedAt) return 0;
+  const end = state.submittedAt || Date.now();
+  return Math.floor((end - state.startedAt) / 1000);
+}
+function timeRemainingSec() {
+  return CONFIG.durationSec - timeUsedSec();
+}
+
+/* ============================================================
+   TIMER
+   ============================================================ */
+function startTimer() {
+  if (state.timerHandle) clearInterval(state.timerHandle);
+  state.timerHandle = setInterval(() => {
+    updateTimer();
+    if (timeRemainingSec() <= 0 && !state.timerExpired) {
+      state.timerExpired = true;
+      clearInterval(state.timerHandle);
+      state.timerHandle = null;
+      autoSubmit();
+    }
+  }, 1000);
+  updateTimer();
+}
+function updateTimer() {
+  const t = document.getElementById('timer');
+  if (!t) return;
+  const rem = timeRemainingSec();
+  t.textContent = fmtTime(rem);
+  t.classList.remove('warn','crit');
+  if (rem <= 60) t.classList.add('crit');
+  else if (rem <= 300) t.classList.add('warn');
+}
+function stopTimer() {
+  if (state.timerHandle) { clearInterval(state.timerHandle); state.timerHandle = null; }
+}
+
+/* ============================================================
+   NAVIGATION / ROUTING
+   ============================================================ */
+function navigate(screen) {
+  state.screen = screen;
+  saveLocal();
+  render();
+}
+function goToQuestion(idx) {
+  if (idx < 0 || idx >= QUESTIONS.length) return;
+  saveCurrentAnswer();
+  state.currentIdx = idx;
+  saveLocal();
+  render();
+}
+function saveCurrentAnswer() {
+  const q = currentQuestion();
+  if (!q) return;
+  const ta = document.getElementById('answer-textarea');
+  if (ta) state.answers[q.id] = ta.value;
+  saveLocal();
+}
+
+/* ============================================================
+   RENDER (main dispatcher)
+   ============================================================ */
+function render() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  switch (state.screen) {
+    case 'landing':        renderLanding(root); break;
+    case 'exam':           renderExam(root); break;
+    case 'review':         renderReview(root); break;
+    case 'submitting':     renderSubmitting(root); break;
+    case 'submitted':      renderSubmitted(root); break;
+    case 'submit_failed':  renderSubmitFailed(root); break;
+    case 'admin_login':    renderAdminLogin(root); break;
+    case 'admin_list':     renderAdminList(root); break;
+    case 'admin_detail':   renderAdminDetail(root); break;
+    default:               renderLanding(root);
+  }
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+function topbar(opts = {}) {
+  const showTimer = opts.timer !== false && state.startedAt && state.screen !== 'submitted' && state.screen !== 'submit_failed';
+  const timer = showTimer ? '<span class="timer" id="timer">' + fmtTime(timeRemainingSec()) + '</span>' : '';
+  return el(
+    '<div class="topbar">' +
+      '<div class="brand"><span class="logo">M</span><span>Melsoft Fundamentals Exam</span></div>' +
+      '<div class="top-right">' + timer + '</div>' +
+    '</div>'
+  );
+}
+
+/* ============================================================
+   LANDING
+   ============================================================ */
+function renderLanding(root) {
+  root.appendChild(topbar({ timer: false }));
+
+  const wrap = el('<div class="landing"></div>');
+  wrap.innerHTML = ''
+    + '<h1>' + esc(CONFIG.examTitle) + '</h1>'
+    + '<p class="muted" style="text-align:center;margin-top:0">' + CONFIG.totalQuestions + ' questions · ' + Math.floor(CONFIG.durationSec/60) + ' minutes · ' + CONFIG.maxScore + ' marks total</p>'
+    + '<div class="rules">'
+    +   '<strong>Before you start:</strong>'
+    +   '<ul>'
+    +     '<li>You will have <strong>' + Math.floor(CONFIG.durationSec/60) + ' minutes</strong> to answer all ' + CONFIG.totalQuestions + ' questions.</li>'
+    +     '<li>Your answers are saved as you go. Refreshing the page will not lose your work.</li>'
+    +     '<li>You can jump between questions using the panel on the left.</li>'
+    +     '<li>Code questions include a run button — press it to test your JavaScript.</li>'
+    +     '<li>The exam auto-submits when the timer reaches zero.</li>'
+    +     '<li>Use of any AI tool during the exam is not allowed.</li>'
+    +   '</ul>'
+    + '</div>'
+    + '<div class="field"><label for="in-name">Your full name</label><input type="text" id="in-name" placeholder="e.g. Thabo Mokoena" value="' + esc(state.student.name) + '"></div>'
+    + '<div class="field"><label for="in-email">Your email</label><input type="email" id="in-email" placeholder="you@example.com" value="' + esc(state.student.email) + '"></div>'
+    + '<button class="primary start-btn" id="start-btn">Start exam</button>'
+    + '<p class="helper" style="text-align:center">By starting, you agree to the exam rules above. The 45-minute timer begins the moment you click.</p>';
+  root.appendChild(wrap);
+
+  document.getElementById('start-btn').addEventListener('click', startExam);
+  ['in-name','in-email'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') startExam();
+    });
+  });
+}
+
+function startExam() {
+  const name = document.getElementById('in-name').value.trim();
+  const email = document.getElementById('in-email').value.trim();
+  if (!name) { alert("Please enter your name."); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert("Please enter a valid email."); return; }
+  state.student = { name, email };
+  state.startedAt = Date.now();
+  state.answers = {};
+  state.flags = {};
+  state.currentIdx = 0;
+  state.screen = 'exam';
+  saveLocal();
+  startTimer();
+  render();
+}
+
+/* ============================================================
+   EXAM VIEW
+   ============================================================ */
+function renderExam(root) {
+  root.appendChild(topbar());
+
+  const layout = el('<div class="exam-layout"></div>');
+
+  // Side panel
+  const side = el('<div class="side"></div>');
+  side.innerHTML =
+      '<h3>Questions</h3>'
+    + '<div class="section-label">Section A · Frontend</div>'
+    + '<div class="qgrid" id="qgrid-a"></div>'
+    + '<div class="section-label">Section B · Backend</div>'
+    + '<div class="qgrid" id="qgrid-b"></div>'
+    + '<div class="legend">'
+    +   '<div class="legend-row"><span class="legend-dot a"></span> Answered</div>'
+    +   '<div class="legend-row"><span class="legend-dot f"></span> Flagged for review</div>'
+    + '</div>'
+    + '<button class="primary" id="go-review" style="width:100%;margin-top:16px">Review &amp; submit</button>';
+  layout.appendChild(side);
+
+  // Question view
+  const q = currentQuestion();
+  const answerVal = state.answers[q.id] != null ? state.answers[q.id] : (q.starter || '');
+  const qv = el('<div class="qview"></div>');
+  qv.innerHTML =
+      '<div class="qmeta">'
+    +   '<span class="badge">Section ' + q.section + '</span>'
+    +   '<span>Question ' + q.number + ' of 10</span>'
+    +   '<span class="kind">' + esc(q.kind) + '</span>'
+    +   '<span class="muted" style="margin-left:auto">' + q.marks + ' mark' + (q.marks === 1 ? '' : 's') + '</span>'
+    + '</div>'
+    + '<h2 class="qtitle">' + esc(q.title) + '</h2>'
+    + '<div class="qprompt">' + esc(q.prompt) + '</div>'
+    + '<div class="qbody" id="qbody"></div>'
+    + '<div class="nav-row">'
+    +   '<div class="nav-left">'
+    +     '<button id="btn-prev" ' + (state.currentIdx === 0 ? 'disabled' : '') + '>&larr; Previous</button>'
+    +   '</div>'
+    +   '<label class="flag-check"><input type="checkbox" id="flag-cb" ' + (state.flags[q.id] ? 'checked' : '') + '> Flag for review</label>'
+    +   '<div class="nav-right">'
+    +     (state.currentIdx === QUESTIONS.length - 1
+           ? '<button class="primary" id="btn-review-end">Review answers &rarr;</button>'
+           : '<button class="primary" id="btn-next">Next &rarr;</button>')
+    +   '</div>'
+    + '</div>';
+  layout.appendChild(qv);
+  root.appendChild(layout);
+
+  // Fill grids
+  QUESTIONS.forEach((qq, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    if (isAnswered(qq.id)) b.classList.add('answered');
+    if (state.flags[qq.id]) b.classList.add('flagged');
+    if (i === state.currentIdx) b.classList.add('current');
+    b.textContent = qq.number;
+    b.addEventListener('click', () => goToQuestion(i));
+    const g = document.getElementById(qq.section === 'A' ? 'qgrid-a' : 'qgrid-b');
+    g.appendChild(b);
+  });
+
+  // Question body: textarea or IDE
+  const body = document.getElementById('qbody');
+  if (q.type === 'text') {
+    const ta = document.createElement('textarea');
+    ta.id = 'answer-textarea';
+    ta.value = answerVal;
+    ta.placeholder = "Type your answer here…";
+    ta.rows = 8;
+    body.appendChild(ta);
+    ta.addEventListener('input', onAnswerInput);
+  } else {
+    // Code question with IDE
+    const ide = el(
+      '<div class="ide">' +
+        '<div class="ide-head">' +
+          '<span class="label">JavaScript editor</span>' +
+          '<div class="ide-actions">' +
+            '<button id="btn-reset">Reset</button>' +
+            '<button id="btn-run" class="primary">▶ Run</button>' +
+            '<button id="btn-clear-console">Clear console</button>' +
+          '</div>' +
+        '</div>' +
+        '<textarea id="answer-textarea" class="code" spellcheck="false" wrap="off"></textarea>' +
+        '<div class="console" id="console"><div class="empty">Press Run to execute your JavaScript.</div></div>' +
+      '</div>'
+    );
+    body.appendChild(ide);
+    const ta = document.getElementById('answer-textarea');
+    ta.value = answerVal;
+    ta.addEventListener('input', onAnswerInput);
+    ta.addEventListener('keydown', tabHandler);
+    document.getElementById('btn-run').addEventListener('click', runCode);
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (confirm("Reset this question's code to the starter? Your typed answer will be lost.")) {
+        ta.value = q.starter || '';
+        state.answers[q.id] = ta.value;
+        saveLocal();
+        rerenderGrid();
+      }
+    });
+    document.getElementById('btn-clear-console').addEventListener('click', () => {
+      const c = document.getElementById('console');
+      c.innerHTML = '<div class="empty">Console cleared.</div>';
+    });
+  }
+
+  // Wire nav
+  document.getElementById('flag-cb').addEventListener('change', e => {
+    state.flags[q.id] = e.target.checked;
+    saveLocal();
+    rerenderGrid();
+  });
+  const prev = document.getElementById('btn-prev');
+  if (prev) prev.addEventListener('click', () => goToQuestion(state.currentIdx - 1));
+  const nx = document.getElementById('btn-next');
+  if (nx) nx.addEventListener('click', () => goToQuestion(state.currentIdx + 1));
+  const rvEnd = document.getElementById('btn-review-end');
+  if (rvEnd) rvEnd.addEventListener('click', () => { saveCurrentAnswer(); navigate('review'); });
+  document.getElementById('go-review').addEventListener('click', () => { saveCurrentAnswer(); navigate('review'); });
+
+  updateTimer();
+}
+
+function rerenderGrid() {
+  QUESTIONS.forEach((qq, i) => {
+    const grid = document.getElementById(qq.section === 'A' ? 'qgrid-a' : 'qgrid-b');
+    if (!grid) return;
+    const btn = grid.children[qq.section === 'A' ? i : i - 10];
+    if (!btn) return;
+    btn.className = 'qbtn';
+    if (isAnswered(qq.id)) btn.classList.add('answered');
+    if (state.flags[qq.id]) btn.classList.add('flagged');
+    if (i === state.currentIdx) btn.classList.add('current');
+  });
+}
+
+function onAnswerInput() {
+  const q = currentQuestion();
+  const ta = document.getElementById('answer-textarea');
+  state.answers[q.id] = ta.value;
+  saveLocal();
+  rerenderGrid();
+}
+
+function tabHandler(e) {
+  if (e.key !== 'Tab') return;
+  e.preventDefault();
+  const ta = e.target;
+  const s = ta.selectionStart, en = ta.selectionEnd;
+  const before = ta.value.substring(0, s);
+  const after = ta.value.substring(en);
+  ta.value = before + '  ' + after;
+  ta.selectionStart = ta.selectionEnd = s + 2;
+  onAnswerInput();
+}
+
+/* ============================================================
+   CODE RUNNER (sandboxed iframe)
+   ============================================================ */
+function runCode() {
+  const ta = document.getElementById('answer-textarea');
+  const code = ta.value;
+  const cons = document.getElementById('console');
+  cons.classList.add('open');
+  cons.innerHTML = '';
+  const appendLine = (kind, args) => {
+    const line = document.createElement('div');
+    line.className = 'line ' + kind;
+    line.textContent = args.map(a => {
+      if (typeof a === 'string') return a;
+      try { return JSON.stringify(a, null, 2); } catch(e) { return String(a); }
+    }).join(' ');
+    cons.appendChild(line);
+    cons.scrollTop = cons.scrollHeight;
+  };
+
+  // Build a sandboxed iframe
+  const iframe = document.createElement('iframe');
+  iframe.sandbox = 'allow-scripts';
+  iframe.style.display = 'none';
+
+  const html =
+    '<!doctype html><html><body><script>' +
+    '(function(){' +
+      'function send(kind,args){parent.postMessage({__mel:true,kind:kind,args:args},"*");}' +
+      'var _c=console;' +
+      'console={' +
+        'log:function(){send("log",Array.prototype.slice.call(arguments).map(function(a){try{return JSON.parse(JSON.stringify(a));}catch(e){return String(a);}}));},' +
+        'warn:function(){send("warn",Array.prototype.slice.call(arguments).map(String));},' +
+        'error:function(){send("error",Array.prototype.slice.call(arguments).map(String));},' +
+        'info:function(){send("info",Array.prototype.slice.call(arguments).map(String));},' +
+      '};' +
+      'window.onerror=function(msg,src,line,col){send("error",["Error: "+msg+" (line "+line+")"]);return true;};' +
+      'window.onunhandledrejection=function(ev){send("error",["Unhandled promise rejection: "+(ev.reason&&ev.reason.message||ev.reason)]);};' +
+      'try{' +
+        'new Function(' + JSON.stringify(code) + ')();' +
+      '}catch(e){send("error",["Error: "+(e.message||e)]);}' +
+      'setTimeout(function(){send("__done",[]);},1500);' +
+    '})();' +
+    '</' + 'script></body></html>';
+
+  iframe.srcdoc = html;
+
+  let done = false;
+  let usedFallback = false;
+  const cleanup = () => {
+    if (done) return;
+    done = true;
+    window.removeEventListener('message', handler);
+    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    if (cons.childElementCount === 0) {
+      cons.innerHTML = '<div class="empty">Code ran with no console output.</div>';
+    }
+  };
+  const handler = (ev) => {
+    const d = ev.data;
+    if (!d || !d.__mel) return;
+    if (d.kind === '__done') { cleanup(); return; }
+    appendLine(d.kind, d.args);
+  };
+  window.addEventListener('message', handler);
+
+  try { document.body.appendChild(iframe); } catch(e) { /* fall through */ }
+
+  // Fallback: if 500ms pass and we've heard nothing (iframe blocked), run in main context.
+  setTimeout(() => {
+    if (done) return;
+    // Detect whether iframe never loaded
+    let loaded = false;
+    try { loaded = iframe.contentDocument !== null; } catch(e) { loaded = true; /* cross-origin means it did load */ }
+    if (loaded && cons.childElementCount > 0) return; // iframe is producing output, wait for done
+    // Assume blocked — run via Function() with a proxied console
+    usedFallback = true;
+    window.removeEventListener('message', handler);
+    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    const savedConsole = window.console;
+    const proxy = {
+      log:   function(){ appendLine('log',   Array.prototype.slice.call(arguments)); },
+      warn:  function(){ appendLine('warn',  Array.prototype.slice.call(arguments)); },
+      error: function(){ appendLine('error', Array.prototype.slice.call(arguments)); },
+      info:  function(){ appendLine('info',  Array.prototype.slice.call(arguments)); },
+    };
+    try {
+      new Function('console', code)(proxy);
+    } catch(e) {
+      appendLine('error', ['Error: ' + (e && e.message || e)]);
+    }
+    setTimeout(() => {
+      if (cons.childElementCount === 0) {
+        cons.innerHTML = '<div class="empty">Code ran with no console output.</div>';
+      }
+      done = true;
+    }, 800);
+  }, 500);
+}
+
+/* ============================================================
+   REVIEW SCREEN
+   ============================================================ */
+function renderReview(root) {
+  root.appendChild(topbar());
+  const wrap = el('<div class="screen"></div>');
+  const answered = QUESTIONS.filter(q => isAnswered(q.id)).length;
+  const flagged = QUESTIONS.filter(q => state.flags[q.id]).length;
+  wrap.innerHTML =
+      '<h1>Review your answers</h1>'
+    + '<p class="muted">You have <strong>' + answered + '</strong> of ' + QUESTIONS.length + ' answered' + (flagged ? ', <strong>' + flagged + '</strong> flagged for review' : '') + '. Click any question to jump back and edit it.</p>'
+    + '<table class="review-table" id="review-tbl">'
+    +   '<thead><tr>'
+    +     '<th class="num">#</th><th>Section</th><th>Question</th>'
+    +     '<th>Your answer</th><th class="status">Status</th><th class="actions"></th>'
+    +   '</tr></thead>'
+    +   '<tbody id="review-body"></tbody>'
+    + '</table>'
+    + '<div style="margin-top:24px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">'
+    +   '<button id="back-to-exam">&larr; Back to questions</button>'
+    +   '<button class="primary" id="submit-btn">Submit exam &rarr;</button>'
+    + '</div>';
+  root.appendChild(wrap);
+
+  const tbody = document.getElementById('review-body');
+  QUESTIONS.forEach((q, i) => {
+    const ans = state.answers[q.id] || '';
+    const status = isAnswered(q.id) ? 'a' : 'u';
+    const flag = state.flags[q.id];
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+        '<td class="num">' + q.number + '</td>'
+      + '<td>' + q.section + '</td>'
+      + '<td style="max-width:320px"><strong>' + esc(q.title) + '</strong><br><span class="muted" style="font-size:13px">' + esc(q.prompt.substring(0, 90)) + (q.prompt.length > 90 ? '…' : '') + '</span></td>'
+      + '<td><div class="review-answer">' + (ans ? esc(ans.substring(0, 140)) + (ans.length > 140 ? '…' : '') : '<em>No answer yet</em>') + '</div></td>'
+      + '<td class="status">'
+      +   '<span class="status-pill ' + status + '">' + (status === 'a' ? 'Answered' : 'Not answered') + '</span>'
+      +   (flag ? ' <span class="status-pill f">Flagged</span>' : '')
+      + '</td>'
+      + '<td class="actions"><button data-i="' + i + '" class="jump-btn">Edit</button></td>';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.jump-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const i = parseInt(b.getAttribute('data-i'), 10);
+      state.currentIdx = i;
+      navigate('exam');
+    });
+  });
+
+  document.getElementById('back-to-exam').addEventListener('click', () => navigate('exam'));
+  document.getElementById('submit-btn').addEventListener('click', confirmSubmit);
+}
+
+function confirmSubmit() {
+  const answered = QUESTIONS.filter(q => isAnswered(q.id)).length;
+  const un = QUESTIONS.length - answered;
+  const msg = un > 0
+    ? "You have " + un + " unanswered question" + (un === 1 ? '' : 's') + ". Once you submit you cannot change any answers. Submit now?"
+    : "All " + QUESTIONS.length + " questions are answered. Once you submit you cannot change any answers. Submit now?";
+  openModal({
+    title: "Submit exam?",
+    body: msg,
+    actions: [
+      { label: "Cancel", onClick: closeModal },
+      { label: "Submit", primary: true, onClick: () => { closeModal(); doSubmit(false); } }
+    ]
+  });
+}
+
+function autoSubmit() {
+  // Time expired: no confirmation
+  doSubmit(true);
+}
+
+/* ============================================================
+   SUBMIT — POSTs to Google Apps Script webhook
+   ============================================================ */
+async function doSubmit(auto) {
+  stopTimer();
+  saveCurrentAnswer();
+  state.submittedAt = Date.now();
+
+  const answers = {};
+  QUESTIONS.forEach(q => { answers[q.id] = state.answers[q.id] || ''; });
+
+  // Trim rubric out of what we send — the server doesn't need it.
+  const questionsMeta = QUESTIONS.map(q => ({
+    id: q.id, section: q.section, number: q.number, kind: q.kind, marks: q.marks, prompt: q.prompt
+  }));
+
+  const payload = {
+    studentName: state.student.name,
+    studentEmail: state.student.email,
+    startedAt: new Date(state.startedAt).toISOString(),
+    submittedAt: new Date(state.submittedAt).toISOString(),
+    timeUsedSec: timeUsedSec(),
+    autoSubmitted: !!auto,
+    answers: answers,
+    questions: questionsMeta,
+    maxScore: CONFIG.maxScore,
+  };
+
+  state.pendingPayload = payload;
+
+  // Show submitting state
+  state.screen = 'submitting';
+  render();
+
+  if (!CONFIG.submitUrl || CONFIG.submitUrl === "PASTE_YOUR_WEBHOOK_URL_HERE") {
+    state.submitError = "This exam has not been configured yet. The submit URL is missing. Please contact your instructor.";
+    state.screen = 'submit_failed';
+    render();
+    return;
+  }
+
+  try {
+    // Use text/plain body to avoid a CORS preflight (Google Apps Script cannot answer OPTIONS).
+    const res = await fetch(CONFIG.submitUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      // NOTE: no Content-Type header — the browser sends text/plain, which is a simple request.
+      redirect: 'follow',
+    });
+    if (!res.ok) throw new Error("Server responded " + res.status);
+    let body = {};
+    try { body = await res.json(); } catch(e) { /* if the server returns non-JSON but 200, treat as ok */ }
+    if (body && body.ok === false) throw new Error(body.error || "Server rejected the submission.");
+
+    // Success
+    state.submitError = null;
+    state.pendingPayload = null;
+    state.screen = 'submitted';
+    clearLocal();
+    render();
+  } catch(err) {
+    state.submitError = String(err && err.message || err);
+    state.screen = 'submit_failed';
+    render();
+  }
+}
+
+/* ============================================================
+   SUBMITTING / SUBMIT-FAILED SCREENS
+   ============================================================ */
+function renderSubmitting(root) {
+  root.appendChild(topbar({ timer: false }));
+  const wrap = el('<div class="submitted"></div>');
+  wrap.innerHTML =
+      '<div class="check" style="background:var(--secondary-tint);color:var(--secondary);">…</div>'
+    + '<h1 style="color:var(--secondary)">Submitting your exam…</h1>'
+    + '<p class="muted">Please wait. Do not close this tab.</p>';
+  root.appendChild(wrap);
+}
+
+function renderSubmitFailed(root) {
+  root.appendChild(topbar({ timer: false }));
+  const wrap = el('<div class="submitted"></div>');
+  wrap.innerHTML =
+      '<div class="check" style="background:var(--danger-tint);color:var(--danger);">!</div>'
+    + '<h1 style="color:var(--danger)">Submission failed</h1>'
+    + '<p>' + esc(state.submitError || 'Unknown error') + '</p>'
+    + '<p class="muted">Your answers are safe. You can try again, or download them as a file to hand in.</p>'
+    + '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">'
+    +   '<button class="primary" id="retry-btn">Retry submission</button>'
+    +   '<button id="download-btn">Download my answers</button>'
+    + '</div>';
+  root.appendChild(wrap);
+  document.getElementById('retry-btn').addEventListener('click', () => doSubmit(false));
+  document.getElementById('download-btn').addEventListener('click', downloadAnswers);
+}
+
+function downloadAnswers() {
+  const payload = state.pendingPayload;
+  if (!payload) { alert("Nothing to download."); return; }
+  const text = JSON.stringify(payload, null, 2);
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (payload.studentName || 'student').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  a.href = url;
+  a.download = 'exam-' + safeName + '-' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ============================================================
+   SUBMITTED SCREEN
+   ============================================================ */
+function renderSubmitted(root) {
+  root.appendChild(topbar({ timer: false }));
+  const wrap = el('<div class="submitted"></div>');
+  wrap.innerHTML =
+      '<div class="check">✓</div>'
+    + '<h1>Exam submitted</h1>'
+    + '<p class="muted">Thank you, ' + esc(state.student.name) + '. Your answers have been recorded.</p>'
+    + '<p class="muted" style="margin-top:16px">Your instructor will mark your paper and share the results with you.</p>'
+    + '<p style="margin-top:24px" class="muted">You may now close this tab.</p>';
+  root.appendChild(wrap);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function openModal({ title, body, actions }) {
+  const bd = document.getElementById('backdrop');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = '<h2>' + esc(title) + '</h2><p>' + esc(body) + '</p><div class="modal-actions" id="modal-actions"></div>';
+  const ac = document.getElementById('modal-actions');
+  actions.forEach(a => {
+    const b = document.createElement('button');
+    b.textContent = a.label;
+    if (a.primary) b.className = 'primary';
+    if (a.danger) b.className = 'danger';
+    b.addEventListener('click', a.onClick);
+    ac.appendChild(b);
+  });
+  bd.classList.add('open');
+}
+function closeModal() {
+  document.getElementById('backdrop').classList.remove('open');
+}
+
+/* ============================================================
+   ADMIN — API calls to the webhook
+   ============================================================ */
+async function apiCall(payload) {
+  if (!CONFIG.submitUrl || CONFIG.submitUrl === "PASTE_YOUR_WEBHOOK_URL_HERE") {
+    throw new Error("This exam has not been configured. The submit URL is missing.");
+  }
+  const res = await fetch(CONFIG.submitUrl, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    redirect: 'follow',
+  });
+  if (!res.ok) throw new Error('Server responded ' + res.status);
+  const body = await res.json();
+  return body;
+}
+
+async function adminLogin(email, password) {
+  const result = await apiCall({ action: 'adminLogin', email, password });
+  if (!result.ok) throw new Error(result.error || 'Login failed.');
+  state.adminToken = result.token;
+  state.adminEmail = result.email;
+  try {
+    sessionStorage.setItem('mel_admin_token', result.token);
+    sessionStorage.setItem('mel_admin_email', result.email);
+  } catch(e) {}
+  return true;
+}
+
+async function adminLogout() {
+  const token = state.adminToken;
+  state.adminToken = null;
+  state.adminEmail = null;
+  state.adminSubmissions = [];
+  state.adminActive = null;
+  try {
+    sessionStorage.removeItem('mel_admin_token');
+    sessionStorage.removeItem('mel_admin_email');
+  } catch(e) {}
+  if (token) {
+    try { await apiCall({ action: 'logout', token }); } catch(e) { /* ignore */ }
+  }
+  state.screen = 'admin_login';
+  render();
+}
+
+async function loadAdminSubmissions() {
+  state.adminLoading = true;
+  state.adminError = null;
+  render();
+  try {
+    const result = await apiCall({ action: 'listSubmissions', token: state.adminToken });
+    if (!result.ok) {
+      if (result.authRequired) { adminLogout(); return; }
+      throw new Error(result.error);
+    }
+    state.adminSubmissions = result.submissions || [];
+    state.adminLoading = false;
+    render();
+  } catch(err) {
+    state.adminLoading = false;
+    state.adminError = String(err && err.message || err);
+    render();
+  }
+}
+
+async function loadAdminSubmission(id) {
+  state.adminLoading = true;
+  state.adminActive = null;
+  state.adminError = null;
+  state.screen = 'admin_detail';
+  render();
+  try {
+    const result = await apiCall({ action: 'getSubmission', token: state.adminToken, id });
+    if (!result.ok) {
+      if (result.authRequired) { adminLogout(); return; }
+      throw new Error(result.error);
+    }
+    state.adminActive = result.submission;
+    state.adminLoading = false;
+    render();
+  } catch(err) {
+    state.adminLoading = false;
+    state.adminError = String(err && err.message || err);
+    render();
+  }
+}
+
+async function saveAdminMarks(id, scores, notes) {
+  const result = await apiCall({ action: 'saveMarks', token: state.adminToken, id, scores, notes });
+  if (!result.ok) {
+    if (result.authRequired) { adminLogout(); throw new Error('Session expired.'); }
+    throw new Error(result.error);
+  }
+  return result;
+}
+
+/* ============================================================
+   ADMIN — Login screen
+   ============================================================ */
+function renderAdminLogin(root) {
+  root.appendChild(topbar({ timer: false }));
+  const wrap = el('<div class="admin-login-card"></div>');
+  wrap.innerHTML =
+      '<h1>Instructor sign in</h1>'
+    + '<p class="sub">Access to exam submissions and marking.</p>'
+    + (state.adminError ? '<div class="err">' + esc(state.adminError) + '</div>' : '')
+    + '<div class="field"><label for="a-email">Email</label><input type="email" id="a-email" autocomplete="username" placeholder="you@example.com"></div>'
+    + '<div class="field"><label for="a-password">Password</label><input type="password" id="a-password" autocomplete="current-password"></div>'
+    + '<button class="primary submit" id="a-submit">Sign in</button>';
+  root.appendChild(wrap);
+
+  const submit = async () => {
+    const email = document.getElementById('a-email').value.trim();
+    const password = document.getElementById('a-password').value;
+    if (!email || !password) { state.adminError = 'Please enter your email and password.'; render(); return; }
+    const btn = document.getElementById('a-submit');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    try {
+      await adminLogin(email, password);
+      state.adminError = null;
+      state.screen = 'admin_list';
+      render();
+      loadAdminSubmissions();
+    } catch(err) {
+      state.adminError = String(err && err.message || err);
+      render();
+      setTimeout(() => { const e = document.getElementById('a-password'); if (e) e.focus(); }, 0);
+    }
+  };
+  document.getElementById('a-submit').addEventListener('click', submit);
+  ['a-email','a-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  });
+  setTimeout(() => document.getElementById('a-email').focus(), 0);
+}
+
+/* ============================================================
+   ADMIN — Submissions list
+   ============================================================ */
+function renderAdminList(root) {
+  root.appendChild(topbar({ timer: false }));
+  const wrap = el('<div class="screen"></div>');
+  wrap.innerHTML =
+      '<div class="admin-header">'
+    +   '<div><h1>Exam submissions</h1><p class="who">Signed in as ' + esc(state.adminEmail || '') + '</p></div>'
+    +   '<div><button id="a-refresh">Refresh</button> <button id="a-logout">Sign out</button></div>'
+    + '</div>'
+    + '<div id="a-body"></div>';
+  root.appendChild(wrap);
+
+  const body = document.getElementById('a-body');
+  if (state.adminLoading) {
+    body.innerHTML = '<div class="empty-state">Loading submissions…</div>';
+  } else if (state.adminError) {
+    body.innerHTML = '<div class="empty-state" style="color:var(--danger)">' + esc(state.adminError) + '</div>';
+  } else if (state.adminSubmissions.length === 0) {
+    body.innerHTML = '<div class="empty-state">No submissions yet. Once students submit, they will appear here.</div>';
+  } else {
+    const t = el('<table class="admin-table"></table>');
+    t.innerHTML =
+        '<thead><tr>'
+      +   '<th>Student</th><th>Email</th><th>Submitted</th><th>Time used</th><th>Score</th><th>Status</th>'
+      + '</tr></thead><tbody id="a-tbody"></tbody>';
+    body.appendChild(t);
+    const tbody = document.getElementById('a-tbody');
+    state.adminSubmissions.forEach(sub => {
+      const tr = document.createElement('tr');
+      tr.className = 'clickable';
+      const when = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString() : '—';
+      const score = sub.totalScore != null ? sub.totalScore + ' / ' + (sub.maxScore || CONFIG.maxScore) : '—';
+      const status = sub.status === 'marked'
+        ? '<span class="status-pill a">Marked</span>'
+        : '<span class="status-pill f">Awaiting marking</span>';
+      tr.innerHTML =
+          '<td>' + esc(sub.studentName || '—') + '</td>'
+        + '<td>' + esc(sub.studentEmail || '—') + '</td>'
+        + '<td>' + esc(when) + '</td>'
+        + '<td>' + esc(sub.timeUsed || '—') + '</td>'
+        + '<td>' + esc(score) + '</td>'
+        + '<td>' + status + '</td>';
+      tr.addEventListener('click', () => loadAdminSubmission(sub.id));
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('a-refresh').addEventListener('click', loadAdminSubmissions);
+  document.getElementById('a-logout').addEventListener('click', () => {
+    if (confirm('Sign out of the instructor console?')) adminLogout();
+  });
+}
+
+/* ============================================================
+   ADMIN — Submission detail (marking)
+   ============================================================ */
+function renderAdminDetail(root) {
+  root.appendChild(topbar({ timer: false }));
+  if (state.adminLoading || !state.adminActive) {
+    const wrap = el('<div class="screen"></div>');
+    wrap.innerHTML =
+        '<div class="admin-header">'
+      +   '<div><h1>Loading submission…</h1></div>'
+      +   '<div><button id="a-back">← Back to list</button></div>'
+      + '</div>'
+      + (state.adminError ? '<div class="empty-state" style="color:var(--danger)">' + esc(state.adminError) + '</div>' : '<div class="empty-state">Fetching…</div>');
+    root.appendChild(wrap);
+    document.getElementById('a-back').addEventListener('click', () => { state.screen = 'admin_list'; render(); });
+    return;
+  }
+
+  const sub = state.adminActive;
+  // Compute current total from marks in state
+  const total = QUESTIONS.reduce((s, q) => {
+    const m = sub.marks && sub.marks[q.id];
+    return s + (m && typeof m.score === 'number' ? m.score : 0);
+  }, 0);
+
+  const wrap = el('<div class="screen"></div>');
+  wrap.innerHTML =
+      '<div class="admin-header">'
+    +   '<div>'
+    +     '<h1>' + esc(sub.studentName) + '</h1>'
+    +     '<p class="who">' + esc(sub.studentEmail)
+    +       ' · Submitted ' + esc(sub.submittedAt ? new Date(sub.submittedAt).toLocaleString() : '—')
+    +       ' · Time used ' + esc(sub.timeUsed || '—')
+    +       (sub.autoSubmitted ? ' <span class="status-pill f">Auto-submitted</span>' : '')
+    +     '</p>'
+    +   '</div>'
+    +   '<div><button id="a-back">← Back to list</button></div>'
+    + '</div>'
+    + '<div style="display:flex;gap:20px;align-items:center;margin-bottom:16px">'
+    +   '<div class="score-big" id="a-total" style="margin:0">' + total + ' / ' + (sub.maxScore || CONFIG.maxScore) + '</div>'
+    +   '<div class="muted">Score updates as you fill in per-question marks below.</div>'
+    + '</div>'
+    + '<div class="mark-detail" id="a-mark-list"></div>'
+    + '<div class="notes-block">'
+    +   '<label style="font-weight:600;font-size:14px;color:var(--secondary);display:block;margin-bottom:6px">Overall notes (optional)</label>'
+    +   '<textarea id="a-notes" placeholder="General feedback for this student…">' + esc(sub.notes || '') + '</textarea>'
+    + '</div>'
+    + '<div class="save-bar">'
+    +   '<div class="muted">Marks are saved back to the Google Sheet.</div>'
+    +   '<div><button id="a-cancel">Discard changes</button> <button class="primary" id="a-save">Save marks</button></div>'
+    + '</div>';
+  root.appendChild(wrap);
+
+  const ml = document.getElementById('a-mark-list');
+  QUESTIONS.forEach(q => {
+    const m = (sub.marks && sub.marks[q.id]) || { score: null, feedback: '' };
+    const answer = (sub.answers && sub.answers[q.id]) || '';
+    const scoreCls = m.score == null ? '' : (m.score >= q.marks * 0.75 ? 'good' : m.score >= q.marks * 0.4 ? 'mid' : 'poor');
+    const div = el('<div class="mark-q"></div>');
+    div.innerHTML =
+        '<div class="mark-q-head">'
+      +   '<div><span class="mark-q-title">' + q.section + q.number + '. ' + esc(q.kind) + '</span> <span class="muted">(out of ' + q.marks + ')</span></div>'
+      +   '<div class="mark-score-tag ' + scoreCls + '" data-tag-for="' + q.id + '">' + (m.score == null ? '—' : m.score) + ' / ' + q.marks + '</div>'
+      + '</div>'
+      + '<div class="mark-q-prompt">' + esc(q.prompt) + '</div>'
+      + '<div class="mark-q-answer">' + (answer ? esc(answer) : '<em>No answer</em>') + '</div>'
+      + '<div class="mark-controls">'
+      +   '<label class="muted">Score:</label>'
+      +   '<input type="number" class="score-input" min="0" max="' + q.marks + '" step="1" value="' + (m.score != null ? m.score : '') + '" data-qid="' + q.id + '" data-role="score">'
+      +   '<input type="text" class="feedback-input" placeholder="Feedback (optional)" value="' + esc(m.feedback || '') + '" data-qid="' + q.id + '" data-role="feedback">'
+      + '</div>';
+    ml.appendChild(div);
+  });
+
+  // Live update: total + tag colour when a score changes
+  ml.addEventListener('input', ev => {
+    const t = ev.target;
+    if (t.dataset && t.dataset.role === 'score') {
+      recomputeAdminTotal();
+    }
+  });
+
+  document.getElementById('a-back').addEventListener('click', () => {
+    state.screen = 'admin_list';
+    render();
+  });
+  document.getElementById('a-cancel').addEventListener('click', () => {
+    if (confirm('Discard unsaved marks on this submission?')) loadAdminSubmission(sub.id);
+  });
+  document.getElementById('a-save').addEventListener('click', async () => {
+    const scores = {};
+    QUESTIONS.forEach(q => {
+      const sc = document.querySelector('[data-qid="' + q.id + '"][data-role="score"]');
+      const fb = document.querySelector('[data-qid="' + q.id + '"][data-role="feedback"]');
+      let score = sc.value === '' ? null : parseInt(sc.value, 10);
+      if (score != null && (isNaN(score) || score < 0)) score = 0;
+      if (score != null && score > q.marks) score = q.marks;
+      scores[q.id] = { score, feedback: fb.value, maxScore: q.marks };
+    });
+    const notes = document.getElementById('a-notes').value;
+    const btn = document.getElementById('a-save');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      const result = await saveAdminMarks(sub.id, scores, notes);
+      // Update in-memory active submission with saved data
+      sub.marks = scores;
+      sub.notes = notes;
+      sub.totalScore = result.totalScore;
+      showToast('Marks saved.');
+      btn.disabled = false;
+      btn.textContent = 'Save marks';
+    } catch(err) {
+      alert('Save failed: ' + (err && err.message || err));
+      btn.disabled = false;
+      btn.textContent = 'Save marks';
+    }
+  });
+}
+
+function recomputeAdminTotal() {
+  let total = 0;
+  QUESTIONS.forEach(q => {
+    const sc = document.querySelector('[data-qid="' + q.id + '"][data-role="score"]');
+    if (!sc) return;
+    const v = sc.value === '' ? null : parseInt(sc.value, 10);
+    if (v != null && !isNaN(v) && v >= 0) total += Math.min(v, q.marks);
+    // update tag
+    const tag = document.querySelector('[data-tag-for="' + q.id + '"]');
+    if (tag) {
+      const cls = v == null ? '' : (v >= q.marks * 0.75 ? 'good' : v >= q.marks * 0.4 ? 'mid' : 'poor');
+      tag.className = 'mark-score-tag ' + cls;
+      tag.textContent = (v == null ? '—' : v) + ' / ' + q.marks;
+    }
+  });
+  const totalEl = document.getElementById('a-total');
+  if (totalEl && state.adminActive) totalEl.textContent = total + ' / ' + (state.adminActive.maxScore || CONFIG.maxScore);
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ============================================================
+   RESUME / BOOT
+   ============================================================ */
+function maybeResume() {
+  const saved = loadLocal();
+  if (!saved) return;
+  if (saved.screen === 'submitted') return; // don't resume post-submit
+  if (saved.startedAt) {
+    state.student = saved.student || { name: '', email: '' };
+    state.startedAt = saved.startedAt;
+    state.answers = saved.answers || {};
+    state.flags = saved.flags || {};
+    state.currentIdx = saved.currentIdx || 0;
+    if (Date.now() - state.startedAt >= CONFIG.durationSec * 1000) {
+      // Timer already expired while away
+      state.timerExpired = true;
+      state.screen = 'exam';
+      // Fire auto-submit after boot
+      setTimeout(() => autoSubmit(), 200);
+    } else {
+      state.screen = 'exam';
+      startTimer();
+    }
+  }
+}
+
+(async function main() {
+  await bootCapabilities();
+  // Restore any existing admin session token
+  try {
+    state.adminToken = sessionStorage.getItem('mel_admin_token') || null;
+    state.adminEmail = sessionStorage.getItem('mel_admin_email') || null;
+  } catch(e) { /* sessionStorage unavailable — carry on */ }
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('admin') === '1') {
+    if (state.adminToken) {
+      state.screen = 'admin_list';
+      render();
+      loadAdminSubmissions();
+    } else {
+      state.screen = 'admin_login';
+      render();
+    }
+    return;
+  }
+  maybeResume();
+  render();
+})();
+</script>
+</body>
+</html>
